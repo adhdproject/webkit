@@ -1,0 +1,190 @@
+<html>
+<head>
+<title>DOM-Hanoi v0.2</title>
+<script>
+/*
+	---===[ DOM-Hanoi v0.2
+	
+		H D Moore      :: hdm[at]metasploit.com
+		Aviv Raff      :: avivra[at]gmail.com
+			
+		(c) 2006 All rights reserved.
+	
+	]===---
+*/
+var ctrls = new Array(
+	"a",
+	"abbr",
+	"acronym",
+	"address",
+	//"applet",
+	"area",
+	"b",
+	"base",
+	"basefont",
+	"bdo",
+	"bgsound",
+	"big",
+	"blink",
+	"blockquote",
+	"br",
+	"button",
+	"caption",
+	"center",
+	"cite",
+	"code",
+	"col",
+	"colgroup",
+	"comment",
+//	"custom", use XMLNS ?
+	"dd",
+	"del",
+	"dfn",
+	"dir",
+	"div",
+	"dl",
+	"dt",
+	"em",
+	"embed",
+	"fieldset",
+	"font",
+	"form",
+	"frame",
+	"frameset", 
+	"head",
+	"h1",
+	"h2",
+	"h3",
+	"h4",
+	"h5",
+	"h6",
+	"hr",
+	"html",
+	"i",
+	"iframe",
+	"img",
+
+	"input",
+/*	"input type='button'",
+	"input type='checkbox'",
+	"input type='hidden'",
+	"input type='image'",
+	"input type='password'",
+	"input type='radio'",
+	"input type='reset'",
+	"input type='submit'",
+	"input type='text'",
+*/	
+	"ins",
+	"isindex",
+	"kbd",
+	"label",
+	"legend",
+	"li",
+	"link",
+	"listing",
+	"map",
+	"marquee",
+	"menu",
+	"meta",
+	"nobr",
+	"noframes",
+	"noscript",
+	"object",
+	"ol",
+	"optgroup",
+	"option",
+	"p",
+	"param",
+	"plainText",
+	"pre",
+	"q",
+	"rt",
+	"ruby",
+	"s",
+	"samp",
+	"script",
+	"select",  
+	"small",
+	"span",
+	"strike",
+	"strong",
+	"style",
+	"sub",
+	"sup",
+	"table",
+	"tbody",
+	"td",
+	"textarea",
+	"tfoot",
+	"th",
+	"thead",
+	"title",
+	"tr",
+	"tt",
+	"u",
+	"ul",
+	"var",
+	"wbr",
+	"xml",
+	"xmp"
+)
+
+  var maxLevel=0;
+  var removeElement=false;
+
+  function appendAllTags(obj, level, top) {
+    for (var i in ctrls) {
+      try {
+        var t=document.createElement(ctrls[i]);
+        var newTop=top+" - "+ctrls[i];
+        updateStatus("Adding "+newTop);
+        if (level<maxLevel) {
+          //window.setTimeout(function () { appendAllTags(t, level+1, newTop);obj.appendChild(t);if (removeElement) obj.removeChild(t);}, 15);
+          appendAllTags(t, level+1, newTop);
+        }
+        obj.appendChild(t);
+        if (removeElement) {
+            obj.removeChild(t);
+        }  
+      }
+      catch (e) { }  
+    }
+  }
+
+  function go() {
+    var cbxRC=document.getElementById("cbxRC");
+    removeElement=cbxRC.checked;
+    var maxLevelCont=document.getElementById("maxLevel");
+    maxLevel=parseInt(maxLevelCont.value);
+    var dcont=document.getElementById("dcont");
+    //window.setTimeout(function () { appendAllTags(dcont, 0, ""); }, 15);
+    appendAllTags(dcont, 0, "");
+  }
+  
+  function updateStatus(status) {
+    var dStatus=document.getElementById("dStatus");
+    dStatus.innerText="Status: "+status;
+    window.status=status;
+  }
+</script>
+</head>
+<body>
+<h3>Welcome to <a href="http://metasploit.com/users/hdm/tools/domhanoi/">DOM-Hanoi</a>.</h3>
+<div>
+DOM-Hanoi is a community-developed utility for verifying browser integrity, written by H D Moore and Aviv Raff.<br />
+DOM-Hanoi will look for common DHTML implementation flaws by adding/removing DOM elements, in a similar way to the known <a href="http://en.wikipedia.org/wiki/Tower_of_Hanoi" target="_blank">Tower of Hanoi</a> game.<br /> 
+This utility may cause the browser to "freeze" for a long period of time, this is OK, 
+and interrupting the process will prevent all the tests from completing. Some browsers will raise a warning if
+a script is taking too long to execute - you will need to click "No, do not abort" or the equivalent to allow
+all tests to complete. <br>
+</div>
+<br />
+Maximum recursion level: <input type="text" id="maxLevel" value="3"><br />
+<input type="checkbox" id="cbxRC" checked="true"><label for="cbxRC">Remove element after append</label><br />
+<br />
+<input type="button" value="Start Testing" onclick="go()"><br />
+<div id="dStatus"></div>
+<div id="dcont" style="visibility:hidden"></div>
+</body>
+</html>
