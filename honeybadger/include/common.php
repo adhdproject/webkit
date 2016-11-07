@@ -16,7 +16,7 @@ if (!is_dir('data')) {
 try {
     $db = new PDO('sqlite:'.$dbname);
     //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION  );
-    $query = 'CREATE TABLE IF NOT EXISTS beacons (id integer primary key, time text, target text, agent text, ip text, port text, useragent text, comment text, lat text, lng text, acc text)';
+    $query = 'CREATE TABLE IF NOT EXISTS beacons (id integer primary key, time text, target text, agent text, ip text, port text, useragent text, comment text, lat text, lng text, acc text, type text)';
     $db->query($query);
     $query = 'CREATE TABLE IF NOT EXISTS users (username text primary key, password text, salt text, role integer)';
     $db->query($query);
@@ -49,8 +49,12 @@ function sanitize($text) {
     return $filtered;
 }
 
+
 // global json response function
-function respond($text) {
+function respond($text, $type="NULL") {
+    if($type != "NULL"){
+	exit;
+    }
     $res = array();
     $res['msg'] = $text;
     echo json_encode($res);

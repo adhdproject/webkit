@@ -4,11 +4,11 @@
 
 // function declarations
 
-function addtodb($target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc="Unknown") {
+function addtodb($type, $target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc="Unknown") {
     global $db;
     $stamp = date("m/d/Y H:i:s");
-    $prep = $db->prepare("INSERT INTO beacons VALUES (NULL, :stamp, :target, :agent, :ip, :port, :useragent, :comment, :lat, :lng, :acc)");
-    $prep->execute(array(":stamp" => $stamp, ":target" => $target, ":agent" => $agent, ":ip" => $ip, ":port" => $port, ":useragent" => $useragent, ":comment" => $comment, ":lat" => $lat, ":lng" => $lng, ":acc" => $acc));
+    $prep = $db->prepare("INSERT INTO beacons VALUES (NULL, :stamp, :target, :agent, :ip, :port, :useragent, :comment, :lat, :lng, :acc, :type)");
+    $prep->execute(array(":stamp" => $stamp, ":target" => $target, ":agent" => $agent, ":ip" => $ip, ":port" => $port, ":useragent" => $useragent, ":comment" => $comment, ":lat" => $lat, ":lng" => $lng, ":acc" => $acc, ":type" => $type));
     logger(sprintf('[*] Target location identified as Lat: %s, Lng: %s', $lat, $lng));
 }
 
@@ -115,6 +115,18 @@ if (isset($_REQUEST['target'], $_REQUEST['agent'])) {
     $target      = sanitize($_REQUEST['target']);
     $agent       = sanitize($_REQUEST['agent']);
 
+    $type 	 = "NULL";
+    if(isset($_REQUEST['type'])) {
+	$type = sanitize($_REQUEST['type']);
+	if($type == 'css') {
+                echo file_get_contents('include/normalize.css');
+        } else if($type == 'img') {
+                echo file_get_contents('include/1x1.jpg');
+        }
+
+
+    }
+
     // "comment" and "useragent" are html entity encoded rather than sanitized
     if (isset($_REQUEST['comment'])) {
         $comment = htmlspecialchars(base64_decode($_REQUEST['comment']));
@@ -139,8 +151,8 @@ if (isset($_REQUEST['target'], $_REQUEST['agent'])) {
         $lat    = sanitize($_REQUEST['lat']);
         $lng    = sanitize($_REQUEST['lng']);
         $acc    = sanitize($_REQUEST['acc']);
-        addtodb($target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc);
-        respond('success');
+        addtodb($type, $target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc);
+        respond('success', $type);
         // respond terminates execution
     } elseif (isset($_REQUEST['os'], $_REQUEST['data'])) {
         $os     = sanitize($_REQUEST['os']);
@@ -174,8 +186,8 @@ if (isset($_REQUEST['target'], $_REQUEST['agent'])) {
                         $acc = $jsondecoded->accuracy;
                         $lat = $jsondecoded->location->lat;
                         $lng = $jsondecoded->location->lng;
-                        addtodb($target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc);
-                        respond('success');                    
+                        addtodb($type, $target, $agent, $ip, $port, $useragent, $comment, $lat, $lng, $acc);
+                        respond('success', $type);                    
                     } else { // handle zero results returned from API
                         logger('[*] No results.');
                     }
@@ -192,8 +204,8 @@ if (isset($_REQUEST['target'], $_REQUEST['agent'])) {
     
     // fall back
     if (!is_null($coords = getCoordsbyIP($ip))) {
-        addtodb($target, $agent, $ip, $port, $useragent, $comment, $coords[0], $coords[1]);
-        respond('success');
+        addtodb($type, $target, $agent, $ip, $port, $useragent, $comment, $coords[0], $coords[1]);
+        respond('success', $type);
         // respond terminates execution
     }
 }
