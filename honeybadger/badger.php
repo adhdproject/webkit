@@ -3,15 +3,6 @@
 
 <?php
 
-
-//You need to get an API key for the Google Maps API
-//Instructions found here: https://developers.google.com/maps/documentation/javascript/get-api-key
-$API="";
-if($API == ""){
-respond("No API key set.  Please set in source of badger.php");
-}
-
-
 // logs out of the ui
 if (isset($_REQUEST['action'])) {
     $item = sanitize($_REQUEST['action']);
@@ -29,39 +20,6 @@ if (isset($_REQUEST['view'])) {
         $content = '';
         if (file_exists($logfile)) { $content = file_get_contents($logfile); }
         echo '<pre>'.$content.'</pre>';
-    } else if ($item == "dataView") {
-	$order = "desc";
-	$orderSet = "False";
-	if(isset($_REQUEST['desc']) && $_REQUEST['desc'] == "False"){
-		$order = "asc";
-		$orderSet = "True";
-	}
-	$prep = $db->prepare("SELECT * FROM beacons order by id $order");
-	$prep->execute();
-	 print "<table border='1' ><thead>
-			<tr>
-				<th><a href='badger.php?view=dataView&desc=$orderSet' >id</a></th>
-				<th>time</th>
-				<th>target</th>
-				<th>agent</th>
-				<th>ip</th>
-				<th>port</th>
-				<th>useragent</th>
-				<th>comment</th>
-				<th>lat</th>
-				<th>lng</th>
-				<th>acc</th>
-				<th>type</th>
-			</tr>
-                        </thead><tbody>";
-	while($row = $prep->fetch(PDO::FETCH_ASSOC)){
-		print "<tr>";
-		foreach($row as $r){
-			print "<td>$r</td>";
-		}
-		print "</tr>";
-	}
-	print "</tbody></table>";
     } else {
         //header('HTTP/1.0 404 Not Found');
         echo "<h1>404 File not found</h1>";
@@ -136,7 +94,7 @@ if (isset($_REQUEST['beacons'])) {
 <html>
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $API; ?>"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyCpjNE-0bpWRD3NlREOz9jo0WDiu2AsmRM"></script>
     <script type="text/javascript" src="badger.js"></script>
     <link rel="stylesheet" type="text/css" href="badger.css">
 </head>
@@ -146,7 +104,6 @@ if (isset($_REQUEST['beacons'])) {
         <img class="logo" src="honeybadger.png" />
         <div>
             <input type="button" class="button" value="View Log" onclick="window.open('./badger.php?view=log','_blank');"><br />
-	    <input type="button" class="button" value="View Data" onclick="window.open('./badger.php?view=dataView','_blank');"><br />
             <?php if ($admin) { echo '<input type="button" class="button" value="Purge Log" onclick="purge(\'log\');"><br />'; } ?>
             <?php if ($admin) { echo '<input type="button" class="button" value="Purge Database" onclick="purge(\'db\');"><br />'; } ?>
             <input type="button" class="button" value="Log Out" onclick="document.location='./badger.php?action=logout';"><br />
