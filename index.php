@@ -1,6 +1,7 @@
 <html><body><h1>Active Defense Harbinger Distribution</h1>
 <a href="/adminer/index.php">Adminer (Database Manager)</a><br>
 <a href="http://<?php echo $_SERVER['SERVER_ADDR']; ?>:3000/ui/panel">BeEF (Console)</a><br>
+<a href="/beef/hook.php" >BeEf (Hook)</a><br>
 <a href="/labyrinth/index.php">Weblabyrinth</a><br>
 <a href="/honeybadger/demo.html">Honey Badger (Location Tracker)</a><br>
 <a href="/honeybadger/badger.php">Honey Badger (Reporting)</a><br>
